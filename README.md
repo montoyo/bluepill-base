@@ -3,21 +3,21 @@ Minimal CMake project for bluepill (STM32F10xx) development. Works with CLion on
 
 ## Basic setup
 ### Required tools
-* On Linux: install the arm-none-eabi-binutils, arm-none-eabi-gcc and arm-none-eabi-newlib packages
-* On Windows: install the ARM GCC toolchain which can be found [here](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+* On Linux: install the cmake, arm-none-eabi-binutils, arm-none-eabi-gcc and arm-none-eabi-newlib packages
+* On Windows:
+    - You will need MinGW, which can be found [here](https://sourceforge.net/projects/mingw-w64/)
+    - Install the ARM GCC toolchain, which can be found [here](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads)
+    - If you're not going to use CLion, you will also need [CMake](https://cmake.org/download/#latest)
+    - Otherwise, if you're going to use CLion, don't forget to add MinGW as a toolchain
 
-### Setting up the CMake project
-**TODO: Windows: explain how to configure the toolchain root**
-
-Simply change the name of the project in CMakeLists.txt (replace bluepill-base by whatever you want in the `project(...)` statement).
-Add source and header files to the `SOURCE_FILES` list. Then, either import the CMakeLists.txt in CLion or build the project using
-
-```
-cmake .
-make
-```
-
-The output bin file will `${PROJECT_NAME}.bin`.
+### Setting up the CLion project
+* Launch CLion, and create a new project by importing `CMakeLists.txt`
+* Go to File \> Settings \> Build, Execution, Deployment \> CMake and in "CMake Options" put `-DCMAKE_TOOLCHAIN_FILE=./arm-toolchain.cmake`
+* Close the settings window
+* Open the CMake window by clicking "CMake" at the bottom
+* Hit the reload button on the top-left of the CMake window
+* If you are on Windows, you're probably seeing errors and need to change the toolchain bin path. To do so, hit the CMake Cache File button (the one with the file and cog icon on the top-left). Look for the `ARM_GCC_BIN_DIR:PATH=/usr/bin` line and replace the path by the path to the bin folder where you installed arm-none-eabi-gcc. Then, hit the reload button again. Errors should be gone.
+* For launch configuration, check out the "CLion Flash & Run configuration" section
 
 ### Wiring to the Arduino's serial to USB
 The bluepill does not come with a serial to USB IC. You can either buy an FTDI chip or, if you have
@@ -31,17 +31,24 @@ an Arduino Uno around, you can use it like this:
 
 ### Flashing via serial
 
-* Compile [bluepill-flash](https://github.com/montoyo/bluepill-flash)
+* Compile [bluepill-flash](https://github.com/montoyo/bluepill-flash) (**TODO: Give link to windows release**)
 * On the bluepill board, move the BOOT0 jumper to 1 and the BOOT1 jumper to 0
 * Connect the FTDI/Arduino to your computer
 * (**TODO: explain how to find the correct serial port**)
 * (**TODO: explain how grant access to the serial port on linux**)
 * Hit the reset button
-* Run `path/to/bluepill-flash -d /dev/ttyACM0 write path/to/bluepill-base.bin start`
+* Run `path/to/bluepill-flash -d {SERIAL_PORT} write path/to/{PROJECT_NAME}.bin start` (don't forget to replace the values between brackets)
 * (If it does not work, try to reset the bluepill and run bluepill-flash again)
 
-### CLion "Flash & run" configuration
-TODO
+### CLion Flash & Run configuration
+This section explains how to configure CLion to do exactly what is done in the "Flashing via serial" section whenever the
+"Run" button is clicked:
+
+* On the upper right, expand the launch configuration list, and choose "Edit Configurations"
+* Change the executable by the bluepill-flash executable
+* Set the program arguments to "-d {SERIAL_PORT} write {PROJECT_NAME}.bin start" (don't forget to replace the values between brackets)
+* Set the working directory to the cmake-build-debug directory
+* Hit OK, and you're good to go!
 
 ## License
 Most of the files in this project are copyright STMicroelectronics. The pinout diagram (Datasheets/Pinout.pdf)
