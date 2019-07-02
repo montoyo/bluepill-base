@@ -31,7 +31,7 @@ an Arduino Uno around, you can use it like this:
 
 ### Flashing via serial
 
-* Compile [bluepill-flash](https://github.com/montoyo/bluepill-flash) (**TODO: Give link to windows release**)
+* Compile [bluepill-flash](https://github.com/montoyo/bluepill-flash) or, if you're using Windows, download a compiled executable from [here](https://github.com/montoyo/bluepill-flash/releases)
 * On the bluepill board, move the BOOT0 jumper to 1 and the BOOT1 jumper to 0
 * Connect the FTDI/Arduino to your computer
 * (**TODO: explain how to find the correct serial port**)
